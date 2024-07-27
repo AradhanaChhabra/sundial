@@ -1,0 +1,26 @@
+.react-select__option:nth-child(1) {
+	border-top-right-radius: 8px;
+	border-top-left-radius: 8px;
+}
+
+.react-select__option:nth-last-child(1) {
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+.react-select__menu-list {
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+	z-index: 100000000000;
+}
+
+.react-select__control {
+	min-height: 32px !important;
+	max-height: 32px !important;
+}
+
+.react-select__input-container {
+	margin: 0px !important;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
+}

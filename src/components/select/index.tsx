@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { GroupBase, StylesConfig } from "react-select";
 import Select from "react-select";
+import "./index.css";
+import { areCategorizedOptions } from "../../utilities";
 
 export interface IOption {
 	value: string;
@@ -10,27 +12,58 @@ export interface IOption {
 export interface ICategorizedOption {
 	label: string;
 	segmentKey: string;
-	options: IOption[];
+	options: Array<Omit<IOption, "isPercentageMetric">>;
 }
 
 export type TOption = IOption | ICategorizedOption;
 
+export interface ISelectedCategorizedOption extends IOption {
+	segmentKey: string;
+}
+
 interface ICustomAsyncSelectProps {
-	// loadOptions: (inputValue: string) => Promise<TOption[]>;
 	options: TOption[];
+	defaultValue?: TOption;
 	placeholder: string;
+	isLoading?: boolean;
+	onChange?: (option: IOption | ISelectedCategorizedOption | null) => void;
 }
 
 export const CustomSelect = ({
 	options,
 	placeholder,
+	onChange,
+	defaultValue,
+	isLoading = false,
 }: ICustomAsyncSelectProps) => {
-	const [selectedOption, setSelectedOption] = useState<TOption | null>(null);
+	const [selectedOption, setSelectedOption] = useState<IOption | null>(null);
+
+	const onSelectChange = useCallback(
+		(option: TOption | null) => {
+			setSelectedOption(option as IOption);
+
+			if (areCategorizedOptions(options)) {
+				const segmentKey = options.find((opt) =>
+					opt.options.some((o) => o.value === (option as IOption).value)
+				)?.segmentKey;
+
+				onChange?.({
+					segmentKey,
+					value: (option as IOption).value,
+					label: (option as IOption).label,
+				});
+			} else {
+				onChange?.(option as IOption);
+			}
+		},
+		[onChange, options]
+	);
 
 	const customStyles: StylesConfig<TOption, false, GroupBase<TOption>> = {
 		control: (provided) => ({
 			...provided,
-			padding: 0,
+			paddingTop: 0,
+			paddingBottom: 0,
 			borderRadius: "8px",
 			borderColor: "transparent", // Removes border color
 			boxShadow: "none", // Removes box shadow
@@ -42,6 +75,8 @@ export const CustomSelect = ({
 		}),
 		menu: (provided) => ({
 			...provided,
+			padding: 0,
+			borderRadius: "8px",
 			radius: "8px",
 			borderColor: "lightgrey",
 			color: "black",
@@ -57,6 +92,7 @@ export const CustomSelect = ({
 			},
 			color: "rgba(0, 0, 0, 0.8)",
 			fontSize: "12px",
+			fontWeight: 500,
 		}),
 		dropdownIndicator: (provided) => ({
 			...provided,
@@ -71,14 +107,16 @@ export const CustomSelect = ({
 
 	return (
 		<Select<TOption>
+			isLoading={isLoading}
+			defaultValue={defaultValue}
+			loadingMessage={() => "Loading options..."}
 			options={options}
-			onChange={(s) => {
-				setSelectedOption(s);
-			}}
+			onChange={onSelectChange}
 			value={selectedOption}
 			placeholder={placeholder}
 			styles={customStyles}
 			classNamePrefix="react-select"
+			menuPortalTarget={document.body}
 		/>
 	);
 };

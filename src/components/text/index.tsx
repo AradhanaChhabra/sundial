@@ -13,11 +13,13 @@ interface ITextProps {
 
 export type TTextSizes = "small" | "medium" | "large";
 
-export type TTextColors = "new-black" | "light-gray";
+export type TTextColors = "new-black" | "light-gray" | "white" | "red";
 
-const COLORS: Record<TTextColors, string> = {
-	"new-black": "text-opacity-80",
-	"light-gray": "text-opacity-50",
+export const COLORS: Record<TTextColors, string> = {
+	"new-black": "text-black text-opacity-80",
+	"light-gray": "text-black text-opacity-50",
+	white: "text-white",
+	red: "text-new-red",
 };
 
 const SIZES: Record<TTextSizes, string> = {
@@ -34,18 +36,20 @@ export const Text = ({
 	size = "medium",
 	bold = false,
 	...props
-}: ITextProps) => {
-	<TextType
-		{...props}
-		className={clsx(
-			"font-inter text-black",
-			COLORS[color],
-			bold && "font-semibold",
-			"truncate",
-			SIZES[size],
-			className
-		)}
-	>
-		{children}
-	</TextType>;
+}: ITextProps): JSX.Element => {
+	return (
+		<TextType
+			{...props}
+			className={clsx(
+				"font-inter",
+				COLORS[color],
+				bold && "font-semibold",
+				"truncate",
+				SIZES[size],
+				className
+			)}
+		>
+			{children}
+		</TextType>
+	);
 };
