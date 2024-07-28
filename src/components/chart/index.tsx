@@ -7,8 +7,6 @@ const ChartComponent = ({ data }: { data: ITimeSeriesData["values"] }) => {
 		.map((item) => [new Date(item.date).getTime(), item.value])
 		.sort((a, b) => a[0] - b[0]);
 
-	console.log(formattedData);
-
 	const options = {
 		chart: {
 			type: "area",

@@ -1,0 +1,58 @@
+.card[data-length="3"] .kpi-card:nth-child(3n + 1) {
+	@apply !border-l-0;
+}
+
+.card[data-length="3"] .kpi-card:last-child:not(:nth-child(3n)) {
+	@apply border-r-[1px] border-light-gray;
+}
+
+.card[data-length="2"] .kpi-card:nth-child(2n + 1) {
+	@apply !border-l-0;
+}
+
+.card[data-length="2"] .kpi-card:last-child:not(:nth-child(2n)) {
+	@apply border-r-[1px] border-light-gray;
+}
+
+/* .card[data-length="1"] .kpi-card {
+	@apply border-none;
+}
+
+.card[data-length="2"] .kpi-card {
+	@apply border-r-[1px] border-light-gray even:border-none;
+}
+
+.card[data-length="2"] .kpi-card:nth-child(2n)::after {
+	display: inline-block;
+	content: "";
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	width: 100%;
+	margin: 0;
+	transform: translateY(1rem);
+}
+
+.card[data-length="2"] .kpi-card:not(:first(2)):not(:last(2))::after {
+	display: inline-block;
+	content: "";
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	width: 120%;
+	margin: 0;
+	transform: translateY(1rem);
+}
+
+.card[data-length="3"] .kpi-card:nth-child(3n)::after {
+	display: inline-block;
+	content: "";
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	width: 350%;
+	margin: 0;
+	transform: translateY(1rem) translateX(-70%);
+}
+
+.card[data-length="3"] .kpi-card {
+	@apply border-r-[1px] border-light-gray;
+}
+
+.card[data-length="3"] .kpi-card:nth-child(3n) {
+	@apply !border-none;
+} */

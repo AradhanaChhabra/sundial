@@ -1,11 +1,18 @@
+import clsx from "clsx";
 import { IChildrenOnlyProps } from "../component";
 
-export const Card = ({ children }: IChildrenOnlyProps) => {
+interface ICardProps extends IChildrenOnlyProps {
+	className?: string;
+}
+
+export const Card = ({ children, className, ...props }: ICardProps) => {
 	return (
 		<div
-			className={
-				"card bg-white rounded-2xl w-[816px] p-8 overflow-y-scroll max-h-max h-max shadow-custom"
-			}
+			className={clsx(
+				"card bg-white rounded-2xl w-[816px] py-8 px-4 overflow-y-scroll max-h-max h-max shadow-custom",
+				className
+			)}
+			{...props}
 		>
 			{children}
 		</div>

@@ -13,6 +13,9 @@ module.exports = {
 				ocean: "#119F97",
 				"dark-ocean": "#0f8a84",
 			},
+			borderColor: {
+				"light-gray": "rgba(0, 0, 0, 0.25)",
+			},
 			boxShadow: {
 				custom:
 					"0px 120px 160px 0px rgba(0, 0, 0, 10%), 0px 40px 48px 0px rgba(0, 0, 0, 8%), 0px 16px 20px 0px rgba(0, 0, 0, 5%), 0px 6px 8px 0px rgba(0, 0, 0, 4%);",

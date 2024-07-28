@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GroupBase, StylesConfig } from "react-select";
 import Select from "react-select";
 import "./index.css";
-import { areCategorizedOptions } from "../../utilities";
+import { areCategorizedOptions, isTruthyValue } from "../../utilities";
 
 export interface IOption {
 	value: string;
@@ -29,6 +29,52 @@ interface ICustomAsyncSelectProps {
 	isLoading?: boolean;
 	onChange?: (option: IOption | ISelectedCategorizedOption | null) => void;
 }
+
+const customStyles: StylesConfig<TOption, false, GroupBase<TOption>> = {
+	control: (provided) => ({
+		...provided,
+		paddingTop: 0,
+		paddingBottom: 0,
+		borderRadius: "8px",
+		borderColor: "transparent", // Removes border color
+		boxShadow: "none", // Removes box shadow
+		backgroundColor: "rgba(0, 0, 0, 0.04)",
+		fontWeight: 500,
+		color: "rgba(0, 0, 0, 0.8)",
+		fontSize: "14px",
+		"&:hover": { borderColor: "transparent" }, // Keeps border color transparent on hover
+	}),
+	menu: (provided) => ({
+		...provided,
+		padding: 0,
+		borderRadius: "8px",
+		radius: "8px",
+		borderColor: "lightgrey",
+		color: "black",
+	}),
+	option: (provided, state) => ({
+		...provided,
+		padding: "6px 14px",
+		backgroundColor: state.isSelected
+			? "rgba(67, 56, 202, 0.1)"
+			: "transparent", // Background color when option is selected
+		"&:hover": {
+			backgroundColor: "rgba(67, 56, 202, 0.2)", // Background color on hover
+		},
+		color: "rgba(0, 0, 0, 0.8)",
+		fontSize: "12px",
+		fontWeight: 500,
+	}),
+	dropdownIndicator: (provided) => ({
+		...provided,
+		color: "rgba(0, 0, 0, 0.5)", // Sets the arrow color to the current text color
+		padding: "0.25rem", // Adjusts padding around the arrow
+	}),
+	indicatorSeparator: (provided) => ({
+		...provided,
+		display: "none", // Hides the separator line between input and dropdown arrow
+	}),
+};
 
 export const CustomSelect = ({
 	options,
@@ -61,51 +107,25 @@ export const CustomSelect = ({
 		[onChange, options]
 	);
 
-	const customStyles: StylesConfig<TOption, false, GroupBase<TOption>> = {
-		control: (provided) => ({
-			...provided,
-			paddingTop: 0,
-			paddingBottom: 0,
-			borderRadius: "8px",
-			borderColor: "transparent", // Removes border color
-			boxShadow: "none", // Removes box shadow
-			backgroundColor: "rgba(0, 0, 0, 0.04)",
-			fontWeight: 500,
-			color: "rgba(0, 0, 0, 0.8)",
-			fontSize: "14px",
-			"&:hover": { borderColor: "transparent" }, // Keeps border color transparent on hover
-		}),
-		menu: (provided) => ({
-			...provided,
-			padding: 0,
-			borderRadius: "8px",
-			radius: "8px",
-			borderColor: "lightgrey",
-			color: "black",
-		}),
-		option: (provided, state) => ({
-			...provided,
-			padding: "6px 14px",
-			backgroundColor: state.isSelected
-				? "rgba(67, 56, 202, 0.1)"
-				: "transparent", // Background color when option is selected
-			"&:hover": {
-				backgroundColor: "rgba(67, 56, 202, 0.2)", // Background color on hover
-			},
-			color: "rgba(0, 0, 0, 0.8)",
-			fontSize: "12px",
-			fontWeight: 500,
-		}),
-		dropdownIndicator: (provided) => ({
-			...provided,
-			color: "rgba(0, 0, 0, 0.5)", // Sets the arrow color to the current text color
-			padding: "0.25rem", // Adjusts padding around the arrow
-		}),
-		indicatorSeparator: (provided) => ({
-			...provided,
-			display: "none", // Hides the separator line between input and dropdown arrow
-		}),
-	};
+	useEffect(() => {
+		if (isTruthyValue(defaultValue)) {
+			setSelectedOption(defaultValue as IOption | null);
+			if (areCategorizedOptions(options)) {
+				const segment = options.find((opt) =>
+					opt.options.some((o) => o.value === (defaultValue as IOption).value)
+				);
+
+				onChange?.({
+					segmentKey: segment?.segmentKey,
+					segmentLabel: segment?.label,
+					value: (defaultValue as IOption).value,
+					label: (defaultValue as IOption).label,
+				});
+			} else {
+				onChange?.(defaultValue as IOption);
+			}
+		}
+	}, [defaultValue, onChange, options]);
 
 	return (
 		<Select<TOption>

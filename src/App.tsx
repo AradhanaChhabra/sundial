@@ -11,6 +11,8 @@ import {
 	METRICS_API_URL,
 	SEGMENTS_API_URL,
 } from "./utilities";
+import clsx from "clsx";
+import "./App.css";
 
 type TSevenDayChange = "increment" | "decrement";
 
@@ -61,7 +63,7 @@ function App() {
 	const [timeSeriesParams, setTimeSeriesParams] =
 		useState<ISelectedTimeSeriesParams | null>(null);
 
-	const [kpiData, setKpiData] = useState<null | IKPIData[]>(null);
+	const [kpiData, setKpiData] = useState<Array<null | IKPIData>>([null]);
 
 	const { data, isLoading } = useTimeSeriesData(
 		timeSeriesParams !== null
@@ -145,29 +147,41 @@ function App() {
 		}
 	}, [isLoadingMetrics, isLoadingSegmentData, metricsData, segmentData]);
 
+	const onAddEmptyCard = useCallback(() => {
+		setKpiData((prev) => {
+			if (prev !== null) {
+				return [...prev, null];
+			}
+
+			return [null];
+		});
+	}, []);
+
 	return (
 		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-24">
-			<Card>
-				{kpiData === null || kpiData?.length === 0 ? (
+			{/* TODO: horizontal line to be added */}
+			<Card
+				className={clsx(
+					"grid divide-light-gray gap-y-12",
+					kpiData.length < 2
+						? "grid-cols-1"
+						: kpiData.length < 3
+						? "grid-cols-2 divide-x-[1px]"
+						: "grid-cols-3 divide-x-[1px]"
+				)}
+				data-length={kpiData.length < 2 ? 1 : kpiData.length < 3 ? 2 : 3}
+			>
+				{kpiData.map((kpi, index) => (
 					<KPICard
-						index={0}
-						timeSeriesData={null}
+						key={index}
+						index={index}
+						timeSeriesData={kpi}
 						onEdit={onEditKPI}
 						segmentOptions={segmentOptions}
 						metricsOptions={metricsOptions}
+						onAddEmptyCard={onAddEmptyCard}
 					/>
-				) : (
-					kpiData.map((kpi, index) => (
-						<KPICard
-							key={index}
-							index={index}
-							timeSeriesData={kpi}
-							onEdit={onEditKPI}
-							segmentOptions={segmentOptions}
-							metricsOptions={metricsOptions}
-						/>
-					))
-				)}
+				))}
 			</Card>
 		</div>
 	);

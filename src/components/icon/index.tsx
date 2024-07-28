@@ -21,7 +21,7 @@ export const ICON_COLORS: Record<TIconColors, string> = {
 
 const SIZES: Record<TIconSizes, number> = {
 	small: 16,
-	medium: 24,
+	medium: 20,
 	large: 32,
 };
 

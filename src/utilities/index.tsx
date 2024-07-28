@@ -47,8 +47,6 @@ export const calculate7DayChange = (
 	const mostRecentValue = data[data.length - 1].value;
 	const sevenDaysAgoValue = data[data.length - 7].value;
 
-	console.log(data[data.length - 1].value, data[data.length - 7].value);
-
 	const percentageChange =
 		((mostRecentValue - sevenDaysAgoValue) / sevenDaysAgoValue) * 100;
 

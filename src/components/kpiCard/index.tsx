@@ -1,6 +1,9 @@
+import clsx from "clsx";
 import { useCallback, useState } from "react";
 import { IKPIData, ISelectedTimeSeriesParams } from "../../App";
+import { AddIcon } from "../../icons/addIcon";
 import { UpwardArrowIcon } from "../../icons/upwardArrow";
+import { formatNumberShorthand } from "../../utilities";
 import Button from "../button";
 import ChartComponent from "../chart";
 import Icon from "../icon";
@@ -13,20 +16,21 @@ import {
 } from "../select";
 import { SkeletonLoader } from "../skeletonLoader";
 import { Text } from "./../text";
-import { formatNumberShorthand } from "../../utilities";
-import clsx from "clsx";
 
 interface IKPICardProps {
 	index: number;
 	timeSeriesData: IKPIData | null;
 	segmentOptions: ICategorizedOption[] | null;
 	metricsOptions: IOption[] | null;
+	onAddEmptyCard: () => void;
 	onEdit: (d: ISelectedTimeSeriesParams) => void;
 }
 
 interface ICardEditStateProps {
 	index: number;
 	segmentOptions: ICategorizedOption[];
+	defaultSegment?: IOption;
+	defaultMetric?: IOption;
 	metricsOptions: IOption[];
 	onEdit: (d: ISelectedTimeSeriesParams) => void;
 	onCancel: () => void;
@@ -36,6 +40,8 @@ const CardEditState = ({
 	index,
 	segmentOptions,
 	metricsOptions,
+	defaultSegment,
+	defaultMetric,
 	onEdit,
 	onCancel,
 }: ICardEditStateProps) => {
@@ -77,6 +83,13 @@ const CardEditState = ({
 		<div className="flex flex-col gap-3">
 			<CustomSelect
 				placeholder="Select a metric"
+				defaultValue={
+					defaultMetric === undefined
+						? index === 0
+							? metricsOptions?.[0]
+							: undefined
+						: defaultMetric
+				}
 				options={metricsOptions}
 				onChange={onMetricSelectChange}
 			/>
@@ -84,13 +97,22 @@ const CardEditState = ({
 			<CustomSelect
 				placeholder="Select a segment"
 				options={segmentOptions}
+				defaultValue={
+					defaultSegment === undefined
+						? index === 0
+							? segmentOptions?.[0].options[0]
+							: undefined
+						: defaultSegment
+				}
 				onChange={onSegmentSelectChange}
 			/>
 
 			<div className="flex flex-row justify-between gap-3">
-				<Button buttonType="cancel" onClick={onCancel}>
-					Cancel
-				</Button>
+				{index !== 0 && (
+					<Button buttonType="cancel" onClick={onCancel}>
+						Cancel
+					</Button>
+				)}
 				<Button buttonType="submit" onClick={onEditKPI}>
 					Add
 				</Button>
@@ -150,7 +172,7 @@ const DataOnCharts = ({
 				)}
 			</div>
 
-			<div className="absolute -right-4 top-[-28px] h-[132px] w-[648px]">
+			<div className="absolute -right-4 top-[-28px] h-[132px] w-4/5">
 				<ChartComponent data={timeSeriesData.values} />
 			</div>
 		</div>
@@ -176,6 +198,7 @@ const KPICard = ({
 	onEdit,
 	segmentOptions,
 	metricsOptions,
+	onAddEmptyCard,
 }: IKPICardProps) => {
 	const [isEditState, setIsEditState] = useState(timeSeriesData === null);
 
@@ -192,7 +215,40 @@ const KPICard = ({
 	);
 
 	return (
-		<div id={String(index)}>
+		<div id={String(index)} className="kpi-card px-6 relative group border-0">
+			<div
+				className={clsx(
+					"absolute opacity-0 py-10 hover:opacity-100 -right-[11px] top-[calc(50%-10px-2.5rem)] group-hover:opacity-100 transition-all duration-100 ease-in-out z-[999] "
+				)}
+			>
+				<Icon
+					icon={AddIcon}
+					color="green"
+					size="medium"
+					onClick={() => {
+						onAddEmptyCard();
+						console.log("Add functionality");
+					}}
+				/>
+			</div>
+
+			<div
+				className={clsx(
+					"absolute py-10 opacity-0 group-hover:opacity-100 hover:opacity-100 -left-2.5 top-[calc(50%-10px-2.5rem)] z-[999] transition-all duration-300 ease-in-out"
+				)}
+			>
+				<Icon
+					icon={AddIcon}
+					color="green"
+					size="medium"
+					className={clsx()}
+					onClick={() => {
+						onAddEmptyCard();
+						console.log("Add functionality");
+					}}
+				/>
+			</div>
+
 			{timeSeriesData !== null && !isEditState ? (
 				<DataOnCharts
 					kpiData={timeSeriesData}
@@ -207,6 +263,8 @@ const KPICard = ({
 					metricsOptions={metricsOptions}
 					onEdit={onEditSubmit}
 					onCancel={onCancel}
+					defaultMetric={timeSeriesData?.metric ?? undefined}
+					defaultSegment={timeSeriesData?.segment?.option}
 				/>
 			) : (
 				<LoadingState />
