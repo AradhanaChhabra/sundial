@@ -19,6 +19,7 @@ export type TOption = IOption | ICategorizedOption;
 
 export interface ISelectedCategorizedOption extends IOption {
 	segmentKey: string;
+	segmentLabel: string;
 }
 
 interface ICustomAsyncSelectProps {
@@ -43,12 +44,13 @@ export const CustomSelect = ({
 			setSelectedOption(option as IOption);
 
 			if (areCategorizedOptions(options)) {
-				const segmentKey = options.find((opt) =>
+				const segment = options.find((opt) =>
 					opt.options.some((o) => o.value === (option as IOption).value)
-				)?.segmentKey;
+				);
 
 				onChange?.({
-					segmentKey,
+					segmentKey: segment?.segmentKey,
+					segmentLabel: segment?.label,
 					value: (option as IOption).value,
 					label: (option as IOption).label,
 				});

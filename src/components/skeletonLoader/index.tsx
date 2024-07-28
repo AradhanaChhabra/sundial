@@ -20,7 +20,7 @@ export const SkeletonLoader = ({
 	<span
 		{...props}
 		className={clsx([
-			"inline-block bg-neutral-darker animate-pulse",
+			"inline-block bg-neutral-200 animate-pulse",
 			rounded && "rounded-lg",
 			block && "w-full",
 			className,

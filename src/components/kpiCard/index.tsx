@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { IEditKPIDataProps } from "../../App";
 import { ITimeSeriesData } from "../../context/useTimeSeriesData";
+import { Text } from "./../text";
 import Button from "../button";
 import {
 	CustomSelect,
@@ -9,10 +10,14 @@ import {
 	ISelectedCategorizedOption,
 	TOption,
 } from "../select";
+import { SkeletonLoader } from "../skeletonLoader";
+import Icon from "../icon";
+import { UpwardArrowIcon } from "../../icons/upwardArrow";
+import ChartComponent from "../chart";
 
 interface IKPICardProps {
 	index: number;
-	data: ITimeSeriesData["values"] | null;
+	timeSeriesData: ITimeSeriesData | null;
 	segmentOptions: ICategorizedOption[] | null;
 	metricsOptions: IOption[] | null;
 	onEdit: (d: IEditKPIDataProps) => void;
@@ -84,18 +89,64 @@ const CardEditState = ({
 	);
 };
 
-const DataOnCharts = ({ showEditMode }: { showEditMode: () => void }) => {
-	return <div onClick={showEditMode}>Data On Charts</div>;
+const DataOnCharts = ({
+	showEditMode,
+	timeSeriesData,
+}: {
+	showEditMode: () => void;
+	timeSeriesData: ITimeSeriesData;
+}) => {
+	return (
+		<div onClick={showEditMode} className="relative flex flex-row">
+			<div className="flex flex-col gap-2">
+				<Text size="small" bold>
+					{timeSeriesData.metric}
+				</Text>
+
+				<Text className="mt-2" size="large" bold>
+					evfrevrv
+				</Text>
+
+				<div className="flex flex-row gap-0.5 items-center">
+					<Icon icon={UpwardArrowIcon} color="red" size="small" />
+					<Text as="span" size="small">
+						sfcef
+					</Text>
+
+					<Text as="span" size="small" color="light-gray">
+						Δ7d
+					</Text>
+				</div>
+			</div>
+
+			<div className="absolute right-0 top-[-16px] h-[134px]">
+				<ChartComponent data={timeSeriesData.values} />
+			</div>
+		</div>
+	);
+};
+
+const LoadingState = (): JSX.Element => {
+	return (
+		<div className="flex flex-col gap-3">
+			<SkeletonLoader height={32} width={120} className="rounded-lg" />
+
+			<div className="flex flex-col gap-2">
+				<SkeletonLoader height={40} rounded block />
+				<SkeletonLoader height={32} rounded block />
+			</div>
+		</div>
+	);
 };
 
 const KPICard = ({
 	index,
-	data,
+	timeSeriesData,
 	onEdit,
 	segmentOptions,
 	metricsOptions,
 }: IKPICardProps) => {
-	const [isEditState, setIsEditState] = useState(data === null);
+	const [isEditState, setIsEditState] = useState(timeSeriesData === null);
 
 	const onCancel = useCallback(() => {
 		setIsEditState(false);
@@ -111,7 +162,14 @@ const KPICard = ({
 
 	return (
 		<div id={String(index)}>
-			{isEditState && segmentOptions !== null && metricsOptions !== null ? (
+			{timeSeriesData !== null && !isEditState ? (
+				<DataOnCharts
+					timeSeriesData={timeSeriesData}
+					showEditMode={() => {
+						setIsEditState(true);
+					}}
+				/>
+			) : segmentOptions !== null && metricsOptions !== null && isEditState ? (
 				<CardEditState
 					index={index}
 					segmentOptions={segmentOptions}
@@ -120,11 +178,7 @@ const KPICard = ({
 					onCancel={onCancel}
 				/>
 			) : (
-				<DataOnCharts
-					showEditMode={() => {
-						setIsEditState(true);
-					}}
-				/>
+				<LoadingState />
 			)}
 		</div>
 	);

@@ -22,6 +22,9 @@ module.exports = {
 				// #ff441a
 				"new-dark-red": "#ff5833",
 			},
+			fontSize: {
+				large: ["28px", "36px"],
+			},
 		},
 	},
 	plugins: [],

@@ -23,8 +23,8 @@ export const COLORS: Record<TTextColors, string> = {
 };
 
 const SIZES: Record<TTextSizes, string> = {
-	small: "text-small",
-	medium: "text-medium",
+	small: "text-sm",
+	medium: "text-md",
 	large: "text-large",
 };
 

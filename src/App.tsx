@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card } from "./components/card";
-import { ICategorizedOption, IOption } from "./components/select";
-import KPICard from "./components/kpiCard";
 import { useCallback, useEffect, useState } from "react";
-import { METRICS_API_URL, SEGMENTS_API_URL } from "./utilities";
+import { Card } from "./components/card";
+import KPICard from "./components/kpiCard";
+import { ICategorizedOption, IOption } from "./components/select";
 import useTimeSeriesData, {
-	ITimeSeriesParams,
 	ITimeSeriesData,
+	ITimeSeriesParams,
 } from "./context/useTimeSeriesData";
+import { METRICS_API_URL, SEGMENTS_API_URL } from "./utilities";
 
 interface IMetricsAPIData {
 	data: Array<{
@@ -40,9 +40,7 @@ function App() {
 	const [timeSeriesParams, setTimeSeriesParams] =
 		useState<ITimeSeriesParams | null>(null);
 
-	const [kpiData, setKpiData] = useState<null | ITimeSeriesData["values"]>(
-		null
-	);
+	const [kpiData, setKpiData] = useState<null | ITimeSeriesData[]>(null);
 
 	const { data, isLoading } = useTimeSeriesData(
 		timeSeriesParams !== null
@@ -80,12 +78,25 @@ function App() {
 
 	useEffect(() => {
 		if (data !== undefined && data !== null && !isLoading) {
-			setKpiData(data.values);
+			setKpiData([
+				{
+					metric: timeSeriesParams?.metric ?? null,
+					segmentKey: timeSeriesParams?.segmentKey ?? null,
+					segmentId: timeSeriesParams?.segmentId ?? null,
+					values: data.values,
+				},
+			]);
 			setTimeout(() => {
 				setTimeSeriesParams(null);
 			}, 100);
 		}
-	}, [data, isLoading]);
+	}, [
+		data,
+		isLoading,
+		timeSeriesParams?.metric,
+		timeSeriesParams?.segmentId,
+		timeSeriesParams?.segmentKey,
+	]);
 
 	useEffect(() => {
 		if (
@@ -121,13 +132,26 @@ function App() {
 	return (
 		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-24">
 			<Card>
-				<KPICard
-					index={0}
-					data={kpiData}
-					onEdit={onEditKPI}
-					segmentOptions={segmentOptions}
-					metricsOptions={metricsOptions}
-				/>
+				{kpiData === null || kpiData?.length === 0 ? (
+					<KPICard
+						index={0}
+						timeSeriesData={null}
+						onEdit={onEditKPI}
+						segmentOptions={segmentOptions}
+						metricsOptions={metricsOptions}
+					/>
+				) : (
+					kpiData.map((kpi, index) => (
+						<KPICard
+							key={index}
+							index={index}
+							timeSeriesData={kpi}
+							onEdit={onEditKPI}
+							segmentOptions={segmentOptions}
+							metricsOptions={metricsOptions}
+						/>
+					))
+				)}
 			</Card>
 		</div>
 	);
