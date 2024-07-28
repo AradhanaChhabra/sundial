@@ -47,6 +47,7 @@ const customStyles: StylesConfig<TOption, false, GroupBase<TOption>> = {
 	menu: (provided) => ({
 		...provided,
 		padding: 0,
+		zIndex: 9999,
 		borderRadius: "8px",
 		radius: "8px",
 		borderColor: "lightgrey",

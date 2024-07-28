@@ -38,6 +38,7 @@ interface ISegmentAPIData {
 export interface IKPIData extends ISelectedTimeSeriesParams {
 	values: ITimeSeriesData["values"];
 	total: number;
+	editMode: boolean;
 	sevenDayChange: {
 		percentage: string | null;
 		type: TSevenDayChange;
@@ -53,6 +54,10 @@ export interface ISelectedTimeSeriesParams {
 	} | null;
 }
 
+export interface IEditKPIProps extends ISelectedTimeSeriesParams {
+	index: number;
+}
+
 function App() {
 	const [metricsOptions, setMetricsData] = useState<IOption[] | null>(null);
 
@@ -61,11 +66,11 @@ function App() {
 	>(null);
 
 	const [timeSeriesParams, setTimeSeriesParams] =
-		useState<ISelectedTimeSeriesParams | null>(null);
+		useState<IEditKPIProps | null>(null);
 
 	const [kpiData, setKpiData] = useState<Array<null | IKPIData>>([null]);
 
-	const { data, isLoading } = useTimeSeriesData(
+	const { data, isLoading, isFetched } = useTimeSeriesData(
 		timeSeriesParams !== null
 			? {
 					metric: timeSeriesParams?.metric?.value,
@@ -90,32 +95,40 @@ function App() {
 			queryFn: () => fetch(SEGMENTS_API_URL).then((res) => res.json()),
 		});
 
-	const onEditKPI = useCallback((props: ISelectedTimeSeriesParams) => {
+	const onEditKPI = useCallback((props: IEditKPIProps) => {
 		setTimeSeriesParams({
 			...props,
 		});
 	}, []);
 
+	// set kpi data on time series params change
 	useEffect(() => {
-		if (data !== undefined && data !== null && !isLoading) {
+		if (
+			data !== undefined &&
+			data !== null &&
+			!isLoading &&
+			timeSeriesParams !== null
+		) {
 			const total = data.values.reduce((a, b) => a + b.value, 0);
 
-			setKpiData([
-				{
+			setKpiData((prev) => {
+				const newData = [...prev];
+
+				newData[timeSeriesParams.index] = {
 					metric: timeSeriesParams?.metric ?? null,
 					segment: timeSeriesParams?.segment ?? null,
 					values: data.values,
 					total,
 					sevenDayChange: calculate7DayChange(data.values),
-				},
-			]);
+					editMode: false,
+				};
 
-			setTimeout(() => {
-				setTimeSeriesParams(null);
-			}, 100);
+				return newData;
+			});
 		}
 	}, [data, isLoading, timeSeriesParams?.metric, timeSeriesParams]);
 
+	// load options
 	useEffect(() => {
 		if (
 			metricsData !== undefined &&
@@ -145,24 +158,76 @@ function App() {
 				}))
 			);
 		}
-	}, [isLoadingMetrics, isLoadingSegmentData, metricsData, segmentData]);
+	}, [
+		isLoadingMetrics,
+		isLoadingSegmentData,
+		kpiData,
+		metricsData,
+		segmentData,
+	]);
 
-	const onAddEmptyCard = useCallback(() => {
+	// initial load data
+	useEffect(() => {
+		if (
+			!(kpiData.length > 1) &&
+			!isLoading &&
+			metricsData !== undefined &&
+			metricsData !== null &&
+			segmentData !== undefined &&
+			segmentData !== null
+		) {
+			if (kpiData.length === 1 && kpiData[0] === null) {
+				setTimeSeriesParams({
+					index: 0,
+					metric: {
+						value: metricsData.data[0].id,
+						label: metricsData.data[0].displayName,
+					},
+					segment: {
+						segmentKey: segmentData.data[0].segmentKey,
+						segmentLabel: segmentData.data[0].displayName,
+						option: {
+							value: segmentData.data[0].values[0].segmentId,
+							label: segmentData.data[0].values[0].displayName,
+						},
+					},
+				});
+			}
+		}
+	}, [isLoading, kpiData, metricsData, segmentData]);
+
+	const onAddEmptyCard = useCallback((index: number) => {
 		setKpiData((prev) => {
 			if (prev !== null) {
-				return [...prev, null];
+				const newData: Array<null | IKPIData> = prev.slice(0, index);
+
+				newData.push(null);
+				console.log("new", newData, [
+					...newData,
+					...prev.slice(index, prev.length),
+				]);
+
+				return [...newData, ...prev.slice(index, prev.length)];
 			}
 
 			return [null];
 		});
 	}, []);
 
+	const onDeleteCard = useCallback((index: number) => {
+		setKpiData((prev) => {
+			return [...prev.slice(0, index), ...prev.slice(index + 1, prev.length)];
+		});
+	}, []);
+
+	console.log("kpi", kpiData);
+
 	return (
 		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-24">
 			{/* TODO: horizontal line to be added */}
 			<Card
 				className={clsx(
-					"grid divide-light-gray gap-y-12",
+					"grid divide-light-gray gap-y-12 self-center max-h-[90%] overflow-y-scroll",
 					kpiData.length < 2
 						? "grid-cols-1"
 						: kpiData.length < 3
@@ -173,13 +238,22 @@ function App() {
 			>
 				{kpiData.map((kpi, index) => (
 					<KPICard
-						key={index}
+						key={`${index}+${kpi === null ? 0 : 1}`}
+						editMode={kpi === null ? true : kpi.editMode}
+						noOfCards={kpiData.length}
+						isLoading={
+							isLoading ||
+							isLoadingMetrics ||
+							isLoadingSegmentData ||
+							!isFetched
+						}
 						index={index}
 						timeSeriesData={kpi}
 						onEdit={onEditKPI}
 						segmentOptions={segmentOptions}
 						metricsOptions={metricsOptions}
 						onAddEmptyCard={onAddEmptyCard}
+						onDeleteCard={onDeleteCard}
 					/>
 				))}
 			</Card>

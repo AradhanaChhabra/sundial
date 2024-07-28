@@ -27,6 +27,7 @@ export interface ITimeSeriesData {
 interface ITimeSeriesDataContext {
 	data?: ITimeSeriesData;
 	isLoading?: boolean;
+	isFetched?: boolean;
 }
 
 export const chartDataQueryKey = ({
@@ -41,7 +42,7 @@ const useTimeSeriesData = ({
 	metric,
 	enableQuery = true,
 }: ITimeSeriesDataProps): ITimeSeriesDataContext => {
-	const { data, isLoading } = useQuery<{ data: ITimeSeriesData }>({
+	const { data, isLoading, isFetched } = useQuery<{ data: ITimeSeriesData }>({
 		queryKey: chartDataQueryKey({
 			segmentId: String(segmentId),
 			segmentKey: String(segmentKey),
@@ -61,7 +62,7 @@ const useTimeSeriesData = ({
 		enabled: enableQuery,
 	});
 
-	return { data: data?.data, isLoading };
+	return { data: data?.data, isLoading, isFetched };
 };
 
 export default useTimeSeriesData;

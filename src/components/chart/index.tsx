@@ -97,7 +97,7 @@ const ChartComponent = ({ data }: { data: ITimeSeriesData["values"] }) => {
 					left: 0,
 					width: "40%",
 					height: "134px",
-					zIndex: 1111,
+					zIndex: 111,
 					filter: "blur(10px)",
 					background:
 						"linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0))",
@@ -110,4 +110,4 @@ const ChartComponent = ({ data }: { data: ITimeSeriesData["values"] }) => {
 	);
 };
 
-export default ChartComponent;
+export { ChartComponent };

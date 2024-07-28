@@ -43,7 +43,7 @@ export const Text = ({
 			className={clsx(
 				"font-inter",
 				COLORS[color],
-				bold && "font-semibold",
+				bold && "font-[500]",
 				"truncate",
 				SIZES[size],
 				className

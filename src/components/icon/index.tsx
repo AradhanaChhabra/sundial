@@ -50,4 +50,4 @@ const Icon = ({
 	/>
 );
 
-export default Icon;
+export { Icon };
