@@ -62,7 +62,10 @@ const KPICard = ({
 	}
 
 	return (
-		<div id={String(index)} className="kpi-card px-6 relative group border-0">
+		<div
+			id={String(index)}
+			className="kpi-card px-6 relative group border-0 min-w-[300px]"
+		>
 			{/* right side button */}
 			<div
 				className={clsx(
@@ -117,6 +120,13 @@ const KPICard = ({
 			) : (
 				<LoadingState />
 			)}
+
+			<hr
+				className={clsx(
+					"md:hidden w-full h-[1px] translate-y-6",
+					index === Number(noOfCards) - 1 && "hidden"
+				)}
+			/>
 		</div>
 	);
 };

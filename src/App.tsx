@@ -202,10 +202,6 @@ function App() {
 				const newData: Array<null | IKPIData> = prev.slice(0, index);
 
 				newData.push(null);
-				console.log("new", newData, [
-					...newData,
-					...prev.slice(index, prev.length),
-				]);
 
 				return [...newData, ...prev.slice(index, prev.length)];
 			}
@@ -220,19 +216,17 @@ function App() {
 		});
 	}, []);
 
-	console.log("kpi", kpiData);
-
 	return (
-		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-24">
+		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-4 md:p-24">
 			{/* TODO: horizontal line to be added */}
 			<Card
 				className={clsx(
-					"grid divide-light-gray gap-y-12 self-center max-h-[90%] overflow-y-scroll",
-					kpiData.length < 2
-						? "grid-cols-1"
-						: kpiData.length < 3
-						? "grid-cols-2 divide-x-[1px]"
-						: "grid-cols-3 divide-x-[1px]"
+					"no-scrollbar grid grid-cols-1 divide-light-gray gap-y-12 self-center !max-h-[84lvh] !w-[96vw]  md:!max-w-[90lvw] overflow-y-scroll",
+					kpiData.length === 2
+						? "md:grid-cols-2 md:divide-x-[1px]"
+						: kpiData.length >= 3
+						? "md:grid-cols-2 lg:grid-cols-3 md:divide-x-[1px]"
+						: ""
 				)}
 				data-length={kpiData.length < 2 ? 1 : kpiData.length < 3 ? 2 : 3}
 			>

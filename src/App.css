@@ -1,9 +1,17 @@
 .card[data-length="3"] .kpi-card:nth-child(3n + 1) {
-	@apply !border-l-0;
+	@apply lg:!border-l-0;
+}
+
+.card[data-length="3"] .kpi-card:nth-child(2n + 1) {
+	@apply md:!border-l-0;
 }
 
 .card[data-length="3"] .kpi-card:last-child:not(:nth-child(3n)) {
-	@apply border-r-[1px] border-light-gray;
+	@apply lg:border-r-[1px] lg:border-light-gray;
+}
+
+.card[data-length="3"] .kpi-card:last-child:not(:nth-child(2n)) {
+	@apply md:border-r-[1px] md:border-light-gray;
 }
 
 .card[data-length="2"] .kpi-card:nth-child(2n + 1) {

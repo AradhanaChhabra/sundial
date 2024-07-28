@@ -72,12 +72,12 @@ const ChartView = ({
 
 			<div
 				className={clsx(
-					"absolute -right-4 top-[-14px] h-[132px] w-4/5 ",
+					"absolute -right-4 top-[4px] h-[132px] w-3/4 ",
 					Number(noOfCards) > 3
-						? "!w-3/5 !max-w-[130px] h-[80]px !top-[10px]"
+						? "md:!w-3/5 md:!max-w-[130px] md:h-[80]px md:!top-[10px]"
 						: Number(noOfCards) > 1
-						? "!w-4/6 h-[80px] !top-[6px]"
-						: "!w-4/5"
+						? "md:!w-4/6 md:h-[80px] md:!top-[6px]"
+						: "md:!w-4/5"
 				)}
 			>
 				<ChartComponent data={timeSeriesData.values} />
