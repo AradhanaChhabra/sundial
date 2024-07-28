@@ -5,9 +5,14 @@ import KPICard from "./components/kpiCard";
 import { ICategorizedOption, IOption } from "./components/select";
 import useTimeSeriesData, {
 	ITimeSeriesData,
-	ITimeSeriesParams,
 } from "./context/useTimeSeriesData";
-import { METRICS_API_URL, SEGMENTS_API_URL } from "./utilities";
+import {
+	calculate7DayChange,
+	METRICS_API_URL,
+	SEGMENTS_API_URL,
+} from "./utilities";
+
+type TSevenDayChange = "increment" | "decrement";
 
 interface IMetricsAPIData {
 	data: Array<{
@@ -28,7 +33,23 @@ interface ISegmentAPIData {
 	}>;
 }
 
-export interface IEditKPIDataProps extends ITimeSeriesParams {}
+export interface IKPIData extends ISelectedTimeSeriesParams {
+	values: ITimeSeriesData["values"];
+	total: number;
+	sevenDayChange: {
+		percentage: string | null;
+		type: TSevenDayChange;
+	};
+}
+
+export interface ISelectedTimeSeriesParams {
+	metric: IOption | null;
+	segment: {
+		segmentKey: string;
+		segmentLabel: string;
+		option: IOption;
+	} | null;
+}
 
 function App() {
 	const [metricsOptions, setMetricsData] = useState<IOption[] | null>(null);
@@ -38,14 +59,16 @@ function App() {
 	>(null);
 
 	const [timeSeriesParams, setTimeSeriesParams] =
-		useState<ITimeSeriesParams | null>(null);
+		useState<ISelectedTimeSeriesParams | null>(null);
 
-	const [kpiData, setKpiData] = useState<null | ITimeSeriesData[]>(null);
+	const [kpiData, setKpiData] = useState<null | IKPIData[]>(null);
 
 	const { data, isLoading } = useTimeSeriesData(
 		timeSeriesParams !== null
 			? {
-					...timeSeriesParams,
+					metric: timeSeriesParams?.metric?.value,
+					segmentKey: timeSeriesParams?.segment?.segmentKey,
+					segmentId: timeSeriesParams?.segment?.option.value,
 					enableQuery: true,
 			  }
 			: {
@@ -65,38 +88,31 @@ function App() {
 			queryFn: () => fetch(SEGMENTS_API_URL).then((res) => res.json()),
 		});
 
-	const onEditKPI = useCallback(
-		({ segmentId, segmentKey, metric }: IEditKPIDataProps) => {
-			setTimeSeriesParams({
-				segmentId,
-				segmentKey,
-				metric,
-			});
-		},
-		[]
-	);
+	const onEditKPI = useCallback((props: ISelectedTimeSeriesParams) => {
+		setTimeSeriesParams({
+			...props,
+		});
+	}, []);
 
 	useEffect(() => {
 		if (data !== undefined && data !== null && !isLoading) {
+			const total = data.values.reduce((a, b) => a + b.value, 0);
+
 			setKpiData([
 				{
 					metric: timeSeriesParams?.metric ?? null,
-					segmentKey: timeSeriesParams?.segmentKey ?? null,
-					segmentId: timeSeriesParams?.segmentId ?? null,
+					segment: timeSeriesParams?.segment ?? null,
 					values: data.values,
+					total,
+					sevenDayChange: calculate7DayChange(data.values),
 				},
 			]);
+
 			setTimeout(() => {
 				setTimeSeriesParams(null);
 			}, 100);
 		}
-	}, [
-		data,
-		isLoading,
-		timeSeriesParams?.metric,
-		timeSeriesParams?.segmentId,
-		timeSeriesParams?.segmentKey,
-	]);
+	}, [data, isLoading, timeSeriesParams?.metric, timeSeriesParams]);
 
 	useEffect(() => {
 		if (

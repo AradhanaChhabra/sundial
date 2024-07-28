@@ -15,8 +15,8 @@ export interface IIconProps
 }
 
 export const ICON_COLORS: Record<TIconColors, string> = {
-	red: "text-red",
-	green: "text-green",
+	red: "!text-new-red",
+	green: "!text-ocean",
 };
 
 const SIZES: Record<TIconSizes, number> = {
@@ -36,6 +36,7 @@ const Icon = ({
 	...props
 }: IIconProps): JSX.Element => (
 	<IconComponent
+		{...props}
 		className={clsx(
 			className,
 			ICON_COLORS[color],
@@ -44,9 +45,8 @@ const Icon = ({
 		)}
 		height={SIZES[size]}
 		width={SIZES[size]}
-		strokeWidth={customStrokeWidth ?? (size === "small" ? 1.5 : 1)}
+		strokeWidth={size === "small" ? 1.5 : 1}
 		onClick={onClick}
-		{...props}
 	/>
 );
 

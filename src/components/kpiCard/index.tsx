@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
-import { IEditKPIDataProps } from "../../App";
-import { ITimeSeriesData } from "../../context/useTimeSeriesData";
-import { Text } from "./../text";
+import { IKPIData, ISelectedTimeSeriesParams } from "../../App";
+import { UpwardArrowIcon } from "../../icons/upwardArrow";
 import Button from "../button";
+import ChartComponent from "../chart";
+import Icon from "../icon";
 import {
 	CustomSelect,
 	ICategorizedOption,
@@ -11,23 +12,23 @@ import {
 	TOption,
 } from "../select";
 import { SkeletonLoader } from "../skeletonLoader";
-import Icon from "../icon";
-import { UpwardArrowIcon } from "../../icons/upwardArrow";
-import ChartComponent from "../chart";
+import { Text } from "./../text";
+import { formatNumberShorthand } from "../../utilities";
+import clsx from "clsx";
 
 interface IKPICardProps {
 	index: number;
-	timeSeriesData: ITimeSeriesData | null;
+	timeSeriesData: IKPIData | null;
 	segmentOptions: ICategorizedOption[] | null;
 	metricsOptions: IOption[] | null;
-	onEdit: (d: IEditKPIDataProps) => void;
+	onEdit: (d: ISelectedTimeSeriesParams) => void;
 }
 
 interface ICardEditStateProps {
 	index: number;
 	segmentOptions: ICategorizedOption[];
 	metricsOptions: IOption[];
-	onEdit: (d: IEditKPIDataProps) => void;
+	onEdit: (d: ISelectedTimeSeriesParams) => void;
 	onCancel: () => void;
 }
 
@@ -57,9 +58,18 @@ const CardEditState = ({
 		}
 
 		onEdit({
-			metric: selectedMetric.value,
-			segmentKey: selectedSegmentOption.segmentKey,
-			segmentId: selectedSegmentOption.value,
+			metric: {
+				value: selectedMetric.value,
+				label: selectedMetric.label,
+			},
+			segment: {
+				segmentKey: selectedSegmentOption.segmentKey,
+				segmentLabel: selectedSegmentOption.segmentLabel,
+				option: {
+					value: selectedSegmentOption.value,
+					label: selectedSegmentOption.label,
+				},
+			},
 		});
 	}, [onEdit, selectedMetric, selectedSegmentOption]);
 
@@ -91,35 +101,56 @@ const CardEditState = ({
 
 const DataOnCharts = ({
 	showEditMode,
-	timeSeriesData,
+	kpiData: timeSeriesData,
 }: {
 	showEditMode: () => void;
-	timeSeriesData: ITimeSeriesData;
+	kpiData: IKPIData;
 }) => {
 	return (
 		<div onClick={showEditMode} className="relative flex flex-row">
-			<div className="flex flex-col gap-2">
-				<Text size="small" bold>
-					{timeSeriesData.metric}
-				</Text>
-
-				<Text className="mt-2" size="large" bold>
-					evfrevrv
-				</Text>
-
-				<div className="flex flex-row gap-0.5 items-center">
-					<Icon icon={UpwardArrowIcon} color="red" size="small" />
-					<Text as="span" size="small">
-						sfcef
+			<div className="flex flex-col justify-between gap-2">
+				<div className="flex flex-col gap-2">
+					<Text size="small" bold className="z-[9999999] mb-5">
+						{timeSeriesData.metric?.label +
+							", " +
+							timeSeriesData.segment?.option.label}
 					</Text>
 
-					<Text as="span" size="small" color="light-gray">
-						Δ7d
+					<Text className="mt-2 z-[9999999]" size="large" bold>
+						{formatNumberShorthand(timeSeriesData.total)}
 					</Text>
 				</div>
+
+				{timeSeriesData.sevenDayChange.percentage !== null && (
+					<div className="flex flex-row gap-1 items-center">
+						<div className="flex flex-row items-center">
+							<Icon
+								icon={UpwardArrowIcon}
+								color={
+									timeSeriesData.sevenDayChange.type === "decrement"
+										? "red"
+										: "green"
+								}
+								size="small"
+								className={clsx(
+									timeSeriesData.sevenDayChange.type === "decrement" &&
+										"rotate-180"
+								)}
+							/>
+
+							<Text as="span" size="small">
+								{timeSeriesData.sevenDayChange.percentage}
+							</Text>
+						</div>
+
+						<Text as="span" size="small" color="light-gray">
+							Δ7d
+						</Text>
+					</div>
+				)}
 			</div>
 
-			<div className="absolute right-0 top-[-16px] h-[134px]">
+			<div className="absolute -right-4 top-[-28px] h-[132px] w-[648px]">
 				<ChartComponent data={timeSeriesData.values} />
 			</div>
 		</div>
@@ -153,8 +184,8 @@ const KPICard = ({
 	}, []);
 
 	const onEditSubmit = useCallback(
-		({ metric, segmentId, segmentKey }: IEditKPIDataProps) => {
-			onEdit({ metric, segmentId, segmentKey });
+		(props: ISelectedTimeSeriesParams) => {
+			onEdit(props);
 			setIsEditState(false);
 		},
 		[onEdit]
@@ -164,7 +195,7 @@ const KPICard = ({
 		<div id={String(index)}>
 			{timeSeriesData !== null && !isEditState ? (
 				<DataOnCharts
-					timeSeriesData={timeSeriesData}
+					kpiData={timeSeriesData}
 					showEditMode={() => {
 						setIsEditState(true);
 					}}
