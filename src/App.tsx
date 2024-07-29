@@ -218,10 +218,9 @@ function App() {
 
 	return (
 		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-4 md:p-24">
-			{/* TODO: horizontal line to be added */}
 			<Card
 				className={clsx(
-					"no-scrollbar grid grid-cols-1 divide-light-gray gap-y-12 self-center !max-h-[84lvh] !w-[96vw]  md:!max-w-[90lvw] overflow-y-scroll",
+					"no-scrollbar grid grid-cols-1 divide-light-gray gap-y-12 self-center !max-h-[84lvh] !w-[96vw] md:!w-[80lvw] lg:!w-[816px] lg:!max-w-[816px]  md:!max-w-[90lvw] overflow-y-scroll",
 					kpiData.length === 2
 						? "md:grid-cols-2 md:divide-x-[1px]"
 						: kpiData.length >= 3

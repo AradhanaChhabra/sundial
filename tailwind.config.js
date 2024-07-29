@@ -12,6 +12,7 @@ module.exports = {
 				"red-light": "rgba(255, 93, 57, 0.3)",
 				ocean: "#119F97",
 				"dark-ocean": "#0f8a84",
+				"light-gray": "rgba(0, 0, 0, 0.5)",
 			},
 			borderColor: {
 				"light-gray": "rgba(0, 0, 0, 0.25)",
