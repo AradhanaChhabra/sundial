@@ -37,13 +37,13 @@ To run Sundial locally on your machine, follow these steps:
    Make sure you have [Node.js](https://nodejs.org/) installed. Then, run:
 
    ```sh
-   npm install
+   yarn install
    ```
 
 3. **Start the development server**:
 
    ```sh
-   npm start
+   yarn start
    ```
 
 4. Open your browser and navigate to `http://localhost:3000`. You should see the Sundial application running.
