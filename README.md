@@ -2,6 +2,13 @@
 
 Welcome to the Sundial project! This project is a visualization tool for time-related data.
 
+Built using
+  - React
+  - TypeScript
+  - Tailwind
+  - highcharts
+  - React Query
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
