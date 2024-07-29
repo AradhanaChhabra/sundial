@@ -69,9 +69,9 @@ Here is a screenshot of Sundial in action:
 
 
 
-<img width="350" alt="Screenshot 2024-07-29 at 7 34 05 AM" src="https://github.com/user-attachments/assets/62a39333-dc97-47ea-a9e5-58c35f2c0f99">
-<img width="390" alt="Screenshot 2024-07-29 at 7 33 28 AM" src="https://github.com/user-attachments/assets/281355df-0e63-43a5-8201-83fb06cd2461">
-<img width="350" alt="Screenshot 2024-07-29 at 7 34 41 AM" src="https://github.com/user-attachments/assets/ef3c466c-5c62-4ba6-bce3-880ab0882536">
+<img width="300" alt="Screenshot 2024-07-29 at 7 34 05 AM" src="https://github.com/user-attachments/assets/62a39333-dc97-47ea-a9e5-58c35f2c0f99">
+<img width="300" alt="Screenshot 2024-07-29 at 7 33 28 AM" src="https://github.com/user-attachments/assets/281355df-0e63-43a5-8201-83fb06cd2461">
+<img width="300" alt="Screenshot 2024-07-29 at 7 34 41 AM" src="https://github.com/user-attachments/assets/ef3c466c-5c62-4ba6-bce3-880ab0882536">
 
 
 
