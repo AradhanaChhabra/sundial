@@ -63,6 +63,18 @@ If you prefer not to run the project locally, you can use the hosted version of 
 ## Screenshot
 
 Here is a screenshot of Sundial in action:
+<img width="1304" alt="Screenshot 2024-07-29 at 7 07 37 AM" src="https://github.com/user-attachments/assets/b0d9dd53-80ef-448d-b36b-ebcf8bad3e9f">
+<img width="1220" alt="Screenshot 2024-07-29 at 7 07 46 AM" src="https://github.com/user-attachments/assets/bd59bcdb-619b-4bec-926e-9d350fd8193d">
+<img width="1512" alt="Screenshot 2024-07-29 at 7 06 18 AM" src="https://github.com/user-attachments/assets/35f36866-a20b-4e53-b73e-1c9b1f459f98">
+
+
+
+![IMG_3174](https://github.com/user-attachments/assets/e73c3591-9b85-4fd1-bcb9-49752ea179f0)
+![IMG_3175](https://github.com/user-attachments/assets/215802ff-0663-4c64-bc66-3e8b6e32f28e)
+![IMG_3176](https://github.com/user-attachments/assets/b2dc1d9c-2cb9-4bbc-a94f-e766cab1c7f1)
+
+
+
 
 ## Folder Structure
 
