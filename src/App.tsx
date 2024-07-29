@@ -13,6 +13,7 @@ import {
 } from "./utilities";
 import clsx from "clsx";
 import "./App.css";
+import { LoadingState } from "./components/kpiCard/loadingState";
 
 type TSevenDayChange = "increment" | "decrement";
 
@@ -67,6 +68,8 @@ function App() {
 
 	const [timeSeriesParams, setTimeSeriesParams] =
 		useState<IEditKPIProps | null>(null);
+
+	const [initialLoad, setInitialLoad] = useState(true);
 
 	const [kpiData, setKpiData] = useState<Array<null | IKPIData>>([null]);
 
@@ -216,6 +219,12 @@ function App() {
 		});
 	}, []);
 
+	useEffect(() => {
+		setTimeout(() => {
+			setInitialLoad(false);
+		}, 700);
+	}, []);
+
 	return (
 		<div className="sundial-assignment-layout bg-radial-gradient h-screen flex item-center justify-center p-4 md:p-24">
 			<Card
@@ -229,26 +238,32 @@ function App() {
 				)}
 				data-length={kpiData.length < 2 ? 1 : kpiData.length < 3 ? 2 : 3}
 			>
-				{kpiData.map((kpi, index) => (
-					<KPICard
-						key={`${index}+${kpi === null ? 0 : 1}`}
-						editMode={kpi === null ? true : kpi.editMode}
-						noOfCards={kpiData.length}
-						isLoading={
-							isLoading ||
-							isLoadingMetrics ||
-							isLoadingSegmentData ||
-							!isFetched
-						}
-						index={index}
-						timeSeriesData={kpi}
-						onEdit={onEditKPI}
-						segmentOptions={segmentOptions}
-						metricsOptions={metricsOptions}
-						onAddEmptyCard={onAddEmptyCard}
-						onDeleteCard={onDeleteCard}
-					/>
-				))}
+				{initialLoad ? (
+					<div className="kpi-card px-6 border-0 ">
+						<LoadingState />
+					</div>
+				) : (
+					kpiData.map((kpi, index) => (
+						<KPICard
+							key={`${index}+${kpi === null ? 0 : 1}`}
+							editMode={isLoading ? false : kpi === null ? true : kpi.editMode}
+							noOfCards={kpiData.length}
+							isLoading={
+								isLoading ||
+								isLoadingMetrics ||
+								isLoadingSegmentData ||
+								!isFetched
+							}
+							index={index}
+							timeSeriesData={kpi}
+							onEdit={onEditKPI}
+							segmentOptions={segmentOptions}
+							metricsOptions={metricsOptions}
+							onAddEmptyCard={onAddEmptyCard}
+							onDeleteCard={onDeleteCard}
+						/>
+					))
+				)}
 			</Card>
 		</div>
 	);
